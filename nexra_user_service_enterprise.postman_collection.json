@@ -10,7 +10,63 @@
             "name": "Auth",
             "item": [
                 {
-                    "name": "1. Register (Triggers Email OTP)",
+                    "name": "1.0 Register Admin (With ROLE_ADMIN)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"admin_user\",\n    \"email\": \"nexra.admin@gmail.com\",\n    \"password\": \"AdminPass@123\",\n    \"roles\": [\"ROLE_ADMIN\", \"ROLE_USER\"]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "register"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "1.1 Register User (Default Role)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"testuser_ent\",\n    \"email\": \"nexra.team@gmail.com\",\n    \"password\": \"Password@123\",\n    \"roles\": []\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "register"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "1.2 Register Duplicate (Expect 409)",
                     "request": {
                         "method": "POST",
                         "header": [],
@@ -241,7 +297,7 @@
             "name": "User Management",
             "item": [
                 {
-                    "name": "Get All Users",
+                    "name": "Get All Users (Any Auth)",
                     "request": {
                         "auth": {
                             "type": "bearer",
@@ -269,7 +325,7 @@
                     "response": []
                 },
                 {
-                    "name": "Get User By ID",
+                    "name": "Delete User (As User - Expect 403)",
                     "request": {
                         "auth": {
                             "type": "bearer",
@@ -281,7 +337,78 @@
                                 }
                             ]
                         },
-                        "method": "GET",
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/1",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "1"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login Admin",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "if (jsonData.access_token) {",
+                                    "    pm.environment.set(\"adminToken\", jsonData.access_token);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"admin_user\",\n    \"password\": \"AdminPass@123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete User (As Admin - Expect 204)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{adminToken}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
                         "header": [],
                         "url": {
                             "raw": "{{baseUrl}}/api/users/1",

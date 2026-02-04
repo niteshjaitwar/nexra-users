@@ -71,6 +71,22 @@ public class User extends BaseEntity implements UserDetails {
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
+    @Builder.Default
+    @Column(name = "account_non_expired")
+    private boolean accountNonExpired = true;
+
+    @Builder.Default
+    @Column(name = "account_non_locked")
+    private boolean accountNonLocked = true;
+
+    @Builder.Default
+    @Column(name = "credentials_non_expired")
+    private boolean credentialsNonExpired = true;
+
+    @Builder.Default
+    @Column(name = "enabled")
+    private boolean enabled = true;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
@@ -80,21 +96,21 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return accountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return credentialsNonExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

@@ -29,12 +29,12 @@ public class UserEventListener {
             emailService.sendEmail(
                     event.getEmail(),
                     "Welcome & Verify Email",
-                    "Welcome! Your OTP is: " + event.getPayload());
+                    event.getPayload()); // Payload is OTP
         } else if ("FORGOT_PASSWORD".equals(event.getEventType())) {
             emailService.sendEmail(
                     event.getEmail(),
                     "Reset Password",
-                    "Your Password Reset OTP is: " + event.getPayload());
+                    event.getPayload()); // Payload is OTP
         }
     }
 }

@@ -7,8 +7,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+
 @SpringBootTest
 class UserServiceApplicationTests {
+
+	@MockitoBean
+	private LettuceConnectionFactory redisConnectionFactory;
 
 	@MockitoBean
 	private RedisTemplate<String, Object> redisTemplate;

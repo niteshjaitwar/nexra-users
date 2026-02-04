@@ -40,15 +40,16 @@ jobs:
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
           KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-        options: --health-cmd "nc -z localhost 9092 || exit 1" --health-interval 10s --health-timeout 5s --health-retries 10
+        # Using cub kafka-ready which is built-in to confluent images
+        options: --health-cmd "cub kafka-ready -b localhost:9092 1 20" --health-interval 10s --health-timeout 5s --health-retries 10
 
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up JDK 25
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '25'
+        java-version: '21'
         distribution: 'temurin'
         cache: 'maven'
     

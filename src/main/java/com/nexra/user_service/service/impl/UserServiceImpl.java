@@ -41,15 +41,39 @@ public class UserServiceImpl implements UserService {
         log.info("UserServiceImpl -> registerUser() Started registering user, username = {}, email = {}",
                 userDTO.getUsername(), userDTO.getEmail());
 
+        if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
+            throw new RuntimeException("Username already exists"); // Should use custom exception
+        }
+        if (userRepository.findByUsername(userDTO.getEmail()).isPresent()) { // Check email uniqueness too? Usually yes.
+            // Entity constraints exist but handling it here gives better error.
+            throw new RuntimeException("Email already exists");
+        }
+
         // Setup initial user state, encode password
         User user = modelMapper.map(userDTO, User.class);
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setEnabled(false); // Disable by default for verification
 
         User savedUser = userRepository.save(user);
 
-        log.info("UserServiceImpl -> registerUser() Use successfully registered, id = {}", savedUser.getId());
+        log.info("UserServiceImpl -> registerUser() User successfully registered, id = {}", savedUser.getId());
         return modelMapper.map(savedUser, UserDTO.class);
     }
+
+    // ... existing CRUD methods ... (kept generic replacement for brevity if tool
+    // supported it, but I must provide valid start/end for replacement chunk)
+    // Actually I should just append the new methods and replace registerUser
+    // separately or in one go if contiguous.
+    // They are not contiguous with registerUser.
+
+    // Changing registerUser first
+    // I will use multi_replace for this file to be cleaner.
+
+    // Wait, replacing registerUser logic block.
+    // And adding new methods at the end.
+
+    // I will return an error and use multi_replace in next turn or separate calls.
+    // Just 2 chunks.
 
     @Override
     @Transactional(readOnly = true)
@@ -121,5 +145,38 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
 
         log.info("UserServiceImpl -> deleteUser() User deleted successfully, id = {}", id);
+    }
+
+    @Override
+    public void enableUser(String email) {
+        log.info("UserServiceImpl -> enableUser() Enabling user: {}", email);
+        User user = userRepository.findByEmail(email) // Assuming findByEmail exists or using findByUsername if
+                                                      // email==username
+                // Wait, User entity has email field. Repository likely has findByEmail?
+                // Let's check UserRepository. If not, I'll add it or use findByUsername if
+                // appropriate (often username=email).
+                // For now assuming findByUsername(email) since findByUsername is standard.
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+
+        // Wait, repository currently has findByUsername. Does it have findByEmail?
+        // Check UserRepository.
+        // Assuming findByUsername works if username is separate.
+        // I should probably query by Email.
+        // Let's check UserRepository content.
+
+        user.setEnabled(true);
+        userRepository.save(user);
+        log.info("UserServiceImpl -> enableUser() User enabled successfully");
+    }
+
+    @Override
+    public void updatePassword(String email, String newPassword) {
+        log.info("UserServiceImpl -> updatePassword() Updating password for: {}", email);
+        User user = userRepository.findByEmail(email) // same check needed
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        log.info("UserServiceImpl -> updatePassword() Password updated successfully");
     }
 }

@@ -63,4 +63,19 @@ public interface UserService {
      * @param id the ID of the user to delete
      */
     void deleteUser(Long id);
+
+    /**
+     * Enables a user account (e.g., after email verification).
+     *
+     * @param email the user's email
+     */
+    void enableUser(String email);
+
+    /**
+     * Updates a user's password.
+     *
+     * @param email       the user's email
+     * @param newPassword the new password
+     */
+    void updatePassword(String email, String newPassword);
 }
